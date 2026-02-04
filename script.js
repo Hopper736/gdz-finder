@@ -1,72 +1,31 @@
-function setTheme(theme) {
-    document.body.className = theme;
-}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GDZ Finder</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="light">
+    <div class="container">
+        <h1>📚 GDZ Finder</h1>
+        <p class="subtitle">Найди ГДЗ по автору, классу и предмету</p>
 
-// База учебников с рабочими ссылками
-const gdzDatabase = [
-    {
-        author: "Виленкин",
-        grade: "5",
-        subject: "Математика",
-        links: [
-            "https://resheba.me/matematika/vilenkin/5",
-            "https://gdz.ru/math/vilenkin/5"
-        ]
-    },
-    {
-        author: "Мерзляк",
-        grade: "7",
-        subject: "Физика",
-        links: [
-            "https://gdz.ru/physics/merzlyak/7"
-        ]
-    },
-    {
-        author: "Александров",
-        grade: "6",
-        subject: "Химия",
-        links: [
-            "https://gdz.ru/chem/aleksandrov/6"
-        ]
-    }
-];
+        <div class="input-group">
+            <input type="text" id="author" placeholder="Автор учебника">
+            <input type="text" id="grade" placeholder="Класс">
+            <input type="text" id="subject" placeholder="Предмет">
+            <button id="search">🔍 Найти ГДЗ</button>
+        </div>
 
-document.getElementById("search").addEventListener("click", () => {
-    const author = document.getElementById("author").value.trim().toLowerCase();
-    const grade = document.getElementById("grade").value.trim();
-    const subject = document.getElementById("subject").value.trim().toLowerCase();
-    const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "";
+        <div class="theme-switcher">
+            <button onclick="setTheme('light')">Светлая</button>
+            <button onclick="setTheme('dark')">Тёмная</button>
+        </div>
 
-    if (!author && !grade && !subject) {
-        alert("Введите хотя бы один параметр!");
-        return;
-    }
+        <div id="results" class="results"></div>
+    </div>
 
-    // Ищем совпадения в базе
-    const matches = gdzDatabase.filter(item => {
-        return (!author || item.author.toLowerCase().includes(author)) &&
-               (!grade || item.grade === grade) &&
-               (!subject || item.subject.toLowerCase().includes(subject));
-    });
-
-    if (matches.length === 0) {
-        // Если нет совпадений → открываем Google
-        const query = `${author} ${grade} класс ${subject} ГДЗ`;
-        const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        resultsDiv.innerHTML = `<p>ГДЗ не найдено в базе, ищем через Google...</p>
-                                <a href="${url}" target="_blank">🔍 Искать в Google</a>`;
-        resultsDiv.classList.add("show");
-    } else {
-        matches.forEach(item => {
-            item.links.forEach(link => {
-                const a = document.createElement("a");
-                a.href = link;
-                a.target = "_blank";
-                a.textContent = `${item.author}, ${item.grade} класс, ${item.subject}`;
-                resultsDiv.appendChild(a);
-            });
-        });
-        resultsDiv.classList.add("show");
-    }
-});
+<script src="script.js"></script>
+</body>
+</html>
