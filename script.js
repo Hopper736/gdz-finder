@@ -2,21 +2,39 @@ function setTheme(theme) {
     document.body.className = theme;
 }
 
-// База учебников
-const gdzDatabase = [
-    { author: "Виленкин", grade: "5", subject: "Математика", links: ["https://resheba.me/matematika/5-klas/vilenkin"] },
-    { author: "Мерзляк", grade: "7", subject: "Физика", links: ["https://gdz.ru/physics/merzlyak/7"] },
-    { author: "Александров", grade: "6", subject: "Химия", links: ["https://gdz.ru/chem/aleksandrov/6"] }
+// Список сайтов ГДЗ
+const gdzSites = [
+    "https://gdz.ru",
+    "https://resh.skysmart.ru",
+    "https://gdz-raketa.ru",
+    "https://kzgdz.com",
+    "https://reshutka.ru"
 ];
 
-// Массив подсказок
+// Пример базы учебников с шаблонами ссылок для каждого сайта
+const gdzDatabase = [
+    { 
+        author: "Виленкин", grade: "5", subject: "Математика", 
+        links: [
+            "https://gdz.ru/matematika/vilenkin/5",
+            "https://resh.skysmart.ru/matematika/vilenkin/5"
+        ]
+    },
+    {
+        author: "Мерзляк", grade: "7", subject: "Физика",
+        links: [
+            "https://gdz.ru/physics/merzlyak/7",
+            "https://kzgdz.com/physics/merzlyak/7"
+        ]
+    }
+];
+
+// Подсказки для input
 const hints = [
     "Попробуй Виленкин 5 класс Математика",
-    "Попробуй Мерзляк 7 класс Физика",
-    "Попробуй Александров 6 класс Химия"
+    "Попробуй Мерзляк 7 класс Физика"
 ];
 
-// Смена placeholder на случайную подсказку
 const authorInput = document.getElementById("author");
 setInterval(() => {
     const hint = hints[Math.floor(Math.random() * hints.length)];
@@ -35,7 +53,7 @@ document.getElementById("search").addEventListener("click", () => {
         return;
     }
 
-    // Поиск по базе (чётко + частично)
+    // Поиск по базе
     const matches = gdzDatabase.filter(item =>
         (!author || item.author.toLowerCase().includes(author)) &&
         (!grade || item.grade.toString().includes(grade)) &&
@@ -43,7 +61,7 @@ document.getElementById("search").addEventListener("click", () => {
     );
 
     if (matches.length === 0) {
-        // Нет в базе → Google fallback
+        // Если нет в базе → Google fallback
         const query = `${author} ${grade} класс ${subject} ГДЗ`;
         const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
         resultsDiv.innerHTML = `<p>ГДЗ не найдено в базе 😿 Попробуй поискать сам:</p>
@@ -57,8 +75,6 @@ document.getElementById("search").addEventListener("click", () => {
                 a.className = "card";
                 a.textContent = `${item.author}, ${item.grade} класс, ${item.subject}`;
                 resultsDiv.appendChild(a);
-
-                // Анимация появления карточек
                 setTimeout(() => a.classList.add("show"), 50);
             });
         });
