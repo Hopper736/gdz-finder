@@ -2,11 +2,33 @@ function setTheme(theme) {
     document.body.className = theme;
 }
 
-// Пример базы учебников (можно расширять)
+// База учебников с рабочими ссылками
 const gdzDatabase = [
-    {author: "Виленкин", grade: "5", subject: "Математика", links: ["https://gdz.ru/math/vilenkin/5", "https://resheba.me/vilenkin/5"]},
-    {author: "Мерзляк", grade: "7", subject: "Физика", links: ["https://gdz.ru/physics/merzlyak/7"]},
-    {author: "Александров", grade: "6", subject: "Химия", links: ["https://gdz.ru/chem/aleksandrov/6"]}
+    {
+        author: "Виленкин",
+        grade: "5",
+        subject: "Математика",
+        links: [
+            "https://resheba.me/matematika/vilenkin/5",
+            "https://gdz.ru/math/vilenkin/5"
+        ]
+    },
+    {
+        author: "Мерзляк",
+        grade: "7",
+        subject: "Физика",
+        links: [
+            "https://gdz.ru/physics/merzlyak/7"
+        ]
+    },
+    {
+        author: "Александров",
+        grade: "6",
+        subject: "Химия",
+        links: [
+            "https://gdz.ru/chem/aleksandrov/6"
+        ]
+    }
 ];
 
 document.getElementById("search").addEventListener("click", () => {
@@ -21,7 +43,7 @@ document.getElementById("search").addEventListener("click", () => {
         return;
     }
 
-    // Поиск совпадений в базе
+    // Ищем совпадения в базе
     const matches = gdzDatabase.filter(item => {
         return (!author || item.author.toLowerCase().includes(author)) &&
                (!grade || item.grade === grade) &&
@@ -29,7 +51,12 @@ document.getElementById("search").addEventListener("click", () => {
     });
 
     if (matches.length === 0) {
-        resultsDiv.innerHTML = "<p>ГДЗ для этого учебника не найдено 😿</p>";
+        // Если нет совпадений → открываем Google
+        const query = `${author} ${grade} класс ${subject} ГДЗ`;
+        const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        resultsDiv.innerHTML = `<p>ГДЗ не найдено в базе, ищем через Google...</p>
+                                <a href="${url}" target="_blank">🔍 Искать в Google</a>`;
+        resultsDiv.classList.add("show");
     } else {
         matches.forEach(item => {
             item.links.forEach(link => {
@@ -40,5 +67,6 @@ document.getElementById("search").addEventListener("click", () => {
                 resultsDiv.appendChild(a);
             });
         });
+        resultsDiv.classList.add("show");
     }
 });
