@@ -1,31 +1,65 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GDZ Finder</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body class="light">
-    <div class="container">
-        <h1>📚 GDZ Finder</h1>
-        <p class="subtitle">Найди ГДЗ по автору, классу и предмету</p>
+function setTheme(theme) {
+    document.body.className = theme;
+}
 
-        <div class="input-group">
-            <input type="text" id="author" placeholder="Автор учебника">
-            <input type="text" id="grade" placeholder="Класс">
-            <input type="text" id="subject" placeholder="Предмет">
-            <button id="search">🔍 Найти ГДЗ</button>
-        </div>
+// Пример базы учебников
+const gdzDatabase = [
+    { author: "Виленкин", grade: "5", subject: "Математика", links: ["https://resheba.me/matematika/5-klas/vilenkin"] },
+    { author: "Мерзляк", grade: "7", subject: "Физика", links: ["https://gdz.ru/physics/merzlyak/7"] },
+    { author: "Александров", grade: "6", subject: "Химия", links: ["https://gdz.ru/chem/aleksandrov/6"] }
+];
 
-        <div class="theme-switcher">
-            <button onclick="setTheme('light')">Светлая</button>
-            <button onclick="setTheme('dark')">Тёмная</button>
-        </div>
+// Массив подсказок
+const hints = [
+    "Попробуй Виленкин 5 класс Математика",
+    "Попробуй Мерзляк 7 класс Физика",
+    "Попробуй Александров 6 класс Химия"
+];
 
-        <div id="results" class="results"></div>
-    </div>
+// Смена placeholder на случайную подсказку
+const authorInput = document.getElementById("author");
+setInterval(() => {
+    const hint = hints[Math.floor(Math.random() * hints.length)];
+    authorInput.placeholder = hint;
+}, 4000);
 
-<script src="script.js"></script>
-</body>
-</html>
+document.getElementById("search").addEventListener("click", () => {
+    const author = document.getElementById("author").value.trim().toLowerCase();
+    const grade = document.getElementById("grade").value.trim();
+    const subject = document.getElementById("subject").value.trim().toLowerCase();
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "";
+
+    if (!author && !grade && !subject) {
+        alert("Введите хотя бы один параметр!");
+        return;
+    }
+
+    const matches = gdzDatabase.filter(item =>
+        (!author || item.author.toLowerCase().includes(author)) &&
+        (!grade || item.grade === grade) &&
+        (!subject || item.subject.toLowerCase().includes(subject))
+    );
+
+    if (matches.length === 0) {
+        // Если нет в базе — выводим Google поиск
+        const query = `${author} ${grade} класс ${subject} ГДЗ`;
+        const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        resultsDiv.innerHTML = `<p>ГДЗ не найдено в базе 😿 Попробуй поискать сам:</p>
+                                <a class="card show" href="${url}" target="_blank">🔍 Искать в Google</a>`;
+    } else {
+        matches.forEach(item => {
+            item.links.forEach(link => {
+                const a = document.createElement("a");
+                a.href = link;
+                a.target = "_blank";
+                a.className = "card";
+                a.textContent = `${item.author}, ${item.grade} класс, ${item.subject}`;
+                resultsDiv.appendChild(a);
+
+                // Плавная анимация появления
+                setTimeout(() => a.classList.add("show"), 50);
+            });
+        });
+    }
+});
