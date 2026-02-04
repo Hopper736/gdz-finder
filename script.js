@@ -2,7 +2,7 @@ function setTheme(theme) {
     document.body.className = theme;
 }
 
-// Пример базы учебников
+// База учебников
 const gdzDatabase = [
     { author: "Виленкин", grade: "5", subject: "Математика", links: ["https://resheba.me/matematika/5-klas/vilenkin"] },
     { author: "Мерзляк", grade: "7", subject: "Физика", links: ["https://gdz.ru/physics/merzlyak/7"] },
@@ -35,14 +35,15 @@ document.getElementById("search").addEventListener("click", () => {
         return;
     }
 
+    // Поиск по базе (чётко + частично)
     const matches = gdzDatabase.filter(item =>
         (!author || item.author.toLowerCase().includes(author)) &&
-        (!grade || item.grade === grade) &&
+        (!grade || item.grade.toString().includes(grade)) &&
         (!subject || item.subject.toLowerCase().includes(subject))
     );
 
     if (matches.length === 0) {
-        // Если нет в базе — выводим Google поиск
+        // Нет в базе → Google fallback
         const query = `${author} ${grade} класс ${subject} ГДЗ`;
         const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
         resultsDiv.innerHTML = `<p>ГДЗ не найдено в базе 😿 Попробуй поискать сам:</p>
@@ -57,7 +58,7 @@ document.getElementById("search").addEventListener("click", () => {
                 a.textContent = `${item.author}, ${item.grade} класс, ${item.subject}`;
                 resultsDiv.appendChild(a);
 
-                // Плавная анимация появления
+                // Анимация появления карточек
                 setTimeout(() => a.classList.add("show"), 50);
             });
         });
